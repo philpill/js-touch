@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color: #999;
+    background-color: #efefef;
+}
+
+#Container {
+    border: solid 1px #efefef;
+    padding: 10px;
+    background: #ffffff;
+}
+
+a {
+    text-decoration: none;
+    color: #00aeef;
+}
+
+a:hover {
+    color: #ff0000;
+    text-decoration: underline;
+}
+
+.link--inactive {
+    color: #efefef;
+}
+
+#Canvas {
+    margin: 10px;
+    border: solid 1px #efefef;
+    z-index: 1;
+    background: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#Canvas:hover {
+    cursor: pointer;
+}
+
+.canvas-background {
+
+    background: url('../img/grid-4.png');
+    height: 520px;
+    width: 300px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 10px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.canvas-container {
+    height: 540px;
+    width: 320px;
+    position: relative;
+}

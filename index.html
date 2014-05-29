@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>JS Game Touch</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+</head>
+<body>
+    <div id="Container">
+        <h1>
+            <a href="https://github.com/philpill/js-touch">
+                JS Game Touch
+            </a>
+        </h1>
+
+        <div class="control-panel">
+            <p>FPS: <span id="Fps"></span></p>
+
+            <a id="Pause" class="control" href="#">Pause</a>
+            <a id="Resume" class="control" href="#">Resume</a>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="Canvas" height="520" width="300"></canvas>
+            <div class="canvas-background"></div>
+        </div>
+    </div>
+    <script src="js/external/require.js" data-main="js/main"></script>
+</body>
+</html>
