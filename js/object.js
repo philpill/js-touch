@@ -16,6 +16,7 @@ define(function (require) {
         this.isClickable = false;
         this.isSelectable = false;
         this.isFocusable = false;
+        this.isActive = true;
         this.hasFocus = false;
         this.translateDelta = 0;
     }
@@ -47,25 +48,29 @@ define(function (require) {
                 y           : this.y,
                 lineWidth   : this.lineWidth,
                 fillStyle   : this.fillStyle,
-                strokeStyle : this.strokecolour
+                strokeStyle : this.strokecolour,
+                isActive    : this.isActive,
+                isClickable : this.isClickable,
+                isSelectable : this.isSelectable,
+                isFocusable : this.isFocusable
             }
         },
-        blurCommand : function (e) {
+        blurCommand : function () {
             this.hasFocus = false;
             this.isSelected = false;
         },
-        focusCommand : function (e) {
+        focusCommand : function () {
             if (this.isFocusable) {
                 this.hasFocus = true;
             }
         },
-        clickCommand : function (e) {
+        clickCommand : function () {
             if (this.isClickable) {
                 console.log(this);
                 console.log('clicked');
             }
         },
-        selectCommand : function (e) {
+        selectCommand : function () {
             if (this.isSelectable) {
                 this.isSelected = true;
             }

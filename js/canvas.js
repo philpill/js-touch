@@ -26,7 +26,18 @@ define(function (require) {
         },
         bindEvents : function () {
 
-            this.canvas.onclick = this.trigger.bind(this, 'click');
+            // this.canvas.addEventListener('click', this.trigger.bind(this, 'click'), false);
+
+            this.canvas.addEventListener('touchstart', this.trigger.bind(this, 'touchstart'), false);
+
+            this.canvas.addEventListener('touchend', this.trigger.bind(this, 'touchend'), false);
+
+            // el.addEventListener("touchstart", handleStart, false);
+            // el.addEventListener("touchend", handleEnd, false);
+            // el.addEventListener("touchcancel", handleCancel, false);
+            // el.addEventListener("touchleave", handleEnd, false);
+            // el.addEventListener("touchmove", handleMove, false);
+
         },
         execute : function (command, e) {
 
@@ -48,11 +59,16 @@ define(function (require) {
 
             while (l--) {
 
-                if (objects[l].type === 'square') {
-                    this.renderSquare(objects[l]);
+                var obj = objects[l];
 
-                } else if (objects[l].type === 'circle') {
-                    this.renderCircle(objects[l]);
+                if (obj.isActive) {
+
+                    if (objects[l].type === 'square') {
+                        this.renderSquare(objects[l]);
+
+                    } else if (objects[l].type === 'circle') {
+                        this.renderCircle(objects[l]);
+                    }
                 }
             }
         },

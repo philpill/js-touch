@@ -31,8 +31,27 @@ define(function (require) {
         loadShapes : function (config) {
 
             this.shapes = [];
+            this.shapes.push(this.getTouchIndicator());
             this.shapes = this.shapes.concat(data.getSquares());
             this.shapes = this.shapes.concat(data.getCircles());
+        },
+        getTouchIndicator : function () {
+
+            var indicator;
+
+            indicator = new Square({
+
+                    id : 'indicator',
+                    height : 16,
+                    width : 16,
+                    isClickable : false,
+                    isSelectable : false,
+                    isFocusable : false,
+                    isActive : false,
+                    fillStyle : '#00ffff'
+                });
+
+            return indicator;
         },
         loadModules : function (config) {
 
@@ -103,9 +122,16 @@ define(function (require) {
             var grid = this.utils.getBlankGrid();
 
             while (l--) {
-                objects[l].gridX = Math.floor(objects[l].x/gridSize);
-                objects[l].gridY = Math.floor(objects[l].y/gridSize);
-                grid[objects[l].gridX][objects[l].gridY] = 1;
+
+                var obj = objects[l];
+
+                if (obj.isActive) {
+
+                    obj.gridX = Math.floor(obj.x/gridSize);
+                    obj.gridY = Math.floor(obj.y/gridSize);
+
+                    grid[obj.gridX][obj.gridY] = 1;
+                }
             }
 
             return grid;
@@ -114,11 +140,12 @@ define(function (require) {
         tickObjects : function (objects, e) {
             var l = objects.length;
             while (l--) {
-                var map = this.getObjectMap();
-
-                this.translate(objects[l], map);
-
-                objects[l].execute('tick', e);
+                var obj = objects[l];
+                if (obj.isActive) {
+                    var map = this.getObjectMap();
+                    this.translate(objects[l], map);
+                    objects[l].execute('tick', e);
+                }
             }
         },
 
@@ -175,6 +202,44 @@ define(function (require) {
             }
         },
 
+        activateObject : function (object, mouse) {
+
+            if (object && object.isSelected) {
+
+                this.blurObjects();
+
+            } else if (object) {
+
+                this.blurObjects();
+
+                object.execute('focus');
+                object.execute('click');
+
+                if (object.isSelectable) {
+                    this.selected = object;
+                    object.execute('select');
+                }
+
+            } else if (this.selected) {
+
+                if (!this.config.isPaused) {
+                    // move object
+                    this.selected.destinationX = mouse.x;
+                    this.selected.destinationY = mouse.y;
+                }
+
+            }
+        },
+
+        getIndicator : function () {
+
+            var indicators = this.shapes.filter(function (shape) {
+                return shape.id ==='indicator';
+            });
+
+            return indicators[0];
+        },
+
         bindEvents : function (config) {
 
             var that = this;
@@ -188,35 +253,38 @@ define(function (require) {
                 });
             });
 
-            this.canvas.bind('click', function(e) {
+            this.canvas.bind('touchstart', function (e) {
+
+                var mouse = that.getMouse({
+                    pageX : e.changedTouches[0].pageX,
+                    pageY : e.changedTouches[0].pageY
+                });
+
+                // get object touched
+
+                var indicator = that.getIndicator();
+
+                indicator.x = mouse.x;
+                indicator.y = mouse.y;
+
+                indicator.isActive = true;
+
+                // bind touchmove
+            });
+
+            this.canvas.bind('touchend', function (e) {
+
+                var indicator = that.getIndicator();
+
+                indicator.isActive = false;
+
+                // unbind touchmove
+            });
+
+            this.canvas.bind('click', function (e) {
                 var mouse = that.getMouse(e);
-                var object = that.getClickedObject(that.getMouse(e));
-                if (object && object.isSelected) {
-
-                    that.blurObjects();
-
-                } else if (object) {
-
-                    that.blurObjects();
-
-                    that.blurObjects();
-                    object.execute('focus', e);
-                    object.execute('click', e);
-
-                    if (object.isSelectable) {
-                        that.selected = object;
-                        object.execute('select', e);
-                    }
-
-                } else if (that.selected) {
-
-                    if (!config.isPaused) {
-                        // move object
-                        that.selected.destinationX = mouse.x;
-                        that.selected.destinationY = mouse.y;
-                    }
-
-                }
+                var object = that.getClickedObject(mouse);
+                that.activateObject(object, mouse);
             });
 
             this.ticker.bind('pause', function(e) {

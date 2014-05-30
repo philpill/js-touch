@@ -20,7 +20,8 @@ define(function (require) {
                     height : 16,
                     width : 16,
                     x : (40 * l) + 41,
-                    y : 121
+                    y : 121,
+                    isActive : true
                 }));
             }
 
@@ -39,7 +40,8 @@ define(function (require) {
                     id : 'circle' + l,
                     radius : 8,
                     x : (40 * l) + 49,
-                    y : 229
+                    y : 229,
+                    isActive : true
                 }));
             }
 

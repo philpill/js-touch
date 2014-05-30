@@ -10,11 +10,13 @@ define(function (require) {
         this.width = args.width || 10;
         this.x = args.x || 30;
         this.y = args.y || 30;
-        this.fillStyle = '#ff0000';
-        this.isClickable = true;
-        this.isFocusable = true;
-        this.isSelectable = true;
+        this.fillStyle = args.fillStyle || '#ff0000';
         this.snapToGrid = true;
+        this.isActive = !!args.isActive;
+        this.isClickable = !!args.isClickable;
+        this.isSelectable = !!args.isSelectable;
+        this.isFocusable = !!args.isFocusable;
+        this.isSelected = !!args.isSelected;
     }
 
     // JavaScript Inheritance Done Right
@@ -41,8 +43,12 @@ define(function (require) {
             x           : this.x,
             y           : this.y,
             fillStyle   : this.fillStyle,
+            snapToGrid  : this.snapToGrid,
+            isActive    : this.isActive,
             isSelected  : this.isSelected,
-            snapToGrid  : this.snapToGrid
+            isClickable : this.isClickable,
+            isFocusable : this.isFocusable,
+            isSelectable : this.isSelectable
         }
     };
 
