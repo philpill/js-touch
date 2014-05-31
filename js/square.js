@@ -17,6 +17,7 @@ define(function (require) {
         this.isSelectable = !!args.isSelectable;
         this.isFocusable = !!args.isFocusable;
         this.isSelected = !!args.isSelected;
+        this.zIndex = args.zIndex || 1;
     }
 
     // JavaScript Inheritance Done Right
@@ -48,7 +49,8 @@ define(function (require) {
             isSelected  : this.isSelected,
             isClickable : this.isClickable,
             isFocusable : this.isFocusable,
-            isSelectable : this.isSelectable
+            isSelectable : this.isSelectable,
+            zIndex      : this.zIndex
         }
     };
 

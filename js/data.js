@@ -21,7 +21,11 @@ define(function (require) {
                     width : 16,
                     x : (40 * l) + 41,
                     y : 121,
-                    isActive : true
+                    isActive : true,
+                    zIndex : 10,
+                    isClickable : true,
+                    isSelectable : true,
+                    isFocusable : true
                 }));
             }
 
@@ -41,7 +45,11 @@ define(function (require) {
                     radius : 8,
                     x : (40 * l) + 49,
                     y : 229,
-                    isActive : true
+                    isActive : true,
+                    zIndex : 10,
+                    isClickable : true,
+                    isSelectable : true,
+                    isFocusable : true
                 }));
             }
 

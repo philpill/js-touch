@@ -48,7 +48,8 @@ define(function (require) {
             isSelected  : this.isSelected,
             isClickable : this.isClickable,
             isFocusable : this.isFocusable,
-            isSelectable : this.isSelectable
+            isSelectable : this.isSelectable,
+            zIndex      : this.zIndex
         }
     };
 

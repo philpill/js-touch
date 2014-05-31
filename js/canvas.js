@@ -32,6 +32,8 @@ define(function (require) {
 
             this.canvas.addEventListener('touchend', this.trigger.bind(this, 'touchend'), false);
 
+            this.canvas.addEventListener('touchmove', this.trigger.bind(this, 'touchmove'), false);
+
             // el.addEventListener("touchstart", handleStart, false);
             // el.addEventListener("touchend", handleEnd, false);
             // el.addEventListener("touchcancel", handleCancel, false);

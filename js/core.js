@@ -48,7 +48,8 @@ define(function (require) {
                     isSelectable : false,
                     isFocusable : false,
                     isActive : false,
-                    fillStyle : '#00ffff'
+                    fillStyle : '#00ffff',
+                    zIndex: 5
                 });
 
             return indicator;
@@ -78,12 +79,13 @@ define(function (require) {
             var objects = [];
             var l = this.shapes ? this.shapes.length : 0;
             while (l--) {
-                if (this.shapes[l].contains(e.x, e.y)) {
+                if (this.shapes[l].contains(e.x, e.y) && this.shapes[l].isClickable) {
                     objects.push(this.shapes[l]);
                 }
             }
+
             return objects.sort(function(a, b) {
-                return a.zIndex - b.zIndex;
+                return b.zIndex - a.zIndex;
             })[0];
         },
 
@@ -278,7 +280,29 @@ define(function (require) {
 
                 indicator.isActive = false;
 
+                var mouse = that.getMouse({
+                    pageX : e.changedTouches[0].pageX,
+                    pageY : e.changedTouches[0].pageY
+                });
+
+                var object = that.getClickedObject(mouse);
+
+                that.activateObject(object, mouse);
+
                 // unbind touchmove
+            });
+
+            this.canvas.bind('touchmove', function (e) {
+
+                var indicator = that.getIndicator();
+
+                var mouse = that.getMouse({
+                    pageX : e.changedTouches[0].pageX,
+                    pageY : e.changedTouches[0].pageY
+                });
+
+                indicator.x = mouse.x;
+                indicator.y = mouse.y;
             });
 
             this.canvas.bind('click', function (e) {
