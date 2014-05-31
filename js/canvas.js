@@ -29,17 +29,14 @@ define(function (require) {
             // this.canvas.addEventListener('click', this.trigger.bind(this, 'click'), false);
 
             this.canvas.addEventListener('touchstart', this.trigger.bind(this, 'touchstart'), false);
+            this.canvas.addEventListener('mousedown', this.trigger.bind(this, 'touchstart'), false);
 
             this.canvas.addEventListener('touchend', this.trigger.bind(this, 'touchend'), false);
+            this.canvas.addEventListener('mouseup', this.trigger.bind(this, 'touchend'), false);
+            this.canvas.addEventListener('touchcancel', this.trigger.bind(this, 'touchend'), false);
 
             this.canvas.addEventListener('touchmove', this.trigger.bind(this, 'touchmove'), false);
-
-            // el.addEventListener("touchstart", handleStart, false);
-            // el.addEventListener("touchend", handleEnd, false);
-            // el.addEventListener("touchcancel", handleCancel, false);
-            // el.addEventListener("touchleave", handleEnd, false);
-            // el.addEventListener("touchmove", handleMove, false);
-
+            this.canvas.addEventListener('mousemove', this.trigger.bind(this, 'touchmove'), false);
         },
         execute : function (command, e) {
 
@@ -105,7 +102,6 @@ define(function (require) {
             this.ctx.arc(x, y, shape.radius, shape.start, shape.end);
             this.ctx.fill();
             this.ctx.stroke();
-
         }
     }
 

@@ -24,7 +24,22 @@ define(function (require) {
             }
             return grid;
         },
-
+        getObjectMap : function (objects) {
+            var gridSize = this.config.canvas.grid.size;
+            var l = objects.length;
+            var grid = this.getBlankGrid();
+            while (l--) {
+                var obj = objects[l];
+                if (obj.isActive) {
+                    obj.gridX = Math.floor(obj.x/gridSize);
+                    obj.gridY = Math.floor(obj.y/gridSize);
+                    if (grid[obj.gridX]) {
+                        grid[obj.gridX][obj.gridY] = 1;
+                    }
+                }
+            }
+            return grid;
+        },
         fuzzyEqual : function (valueA, valueB, delta) {
 
             var fuzzyEqual = false;

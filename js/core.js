@@ -1,12 +1,13 @@
 define(function (require) {
 
-    var Ticker = require('ticker');
-    var Interface = require('interface');
-    var Canvas = require('canvas');
-    var Circle = require('circle');
-    var Square = require('square');
-    var data = require('data');
-    var Utils = require('utils');
+    var Ticker      = require('ticker'),
+        Interface   = require('interface'),
+        Canvas      = require('canvas'),
+        Circle      = require('circle'),
+        Square      = require('square'),
+        Indicator   = require('indicator'),
+        data        = require('data'),
+        Utils       = require('utils');
 
     require('astar');
 
@@ -37,22 +38,7 @@ define(function (require) {
         },
         getTouchIndicator : function () {
 
-            var indicator;
-
-            indicator = new Square({
-
-                    id : 'indicator',
-                    height : 16,
-                    width : 16,
-                    isClickable : false,
-                    isSelectable : false,
-                    isFocusable : false,
-                    isActive : false,
-                    fillStyle : '#00ffff',
-                    zIndex: 5
-                });
-
-            return indicator;
+            return new Indicator();
         },
         loadModules : function (config) {
 
@@ -113,87 +99,65 @@ define(function (require) {
             }
         },
 
-        getObjectMap : function () {
-
-            var gridSize = this.config.canvas.grid.size;
-
-            var objects = this.shapes;
-
-            var l = objects.length;
-
-            var grid = this.utils.getBlankGrid();
-
-            while (l--) {
-
-                var obj = objects[l];
-
-                if (obj.isActive) {
-
-                    obj.gridX = Math.floor(obj.x/gridSize);
-                    obj.gridY = Math.floor(obj.y/gridSize);
-
-                    grid[obj.gridX][obj.gridY] = 1;
-                }
-            }
-
-            return grid;
-        },
-
         tickObjects : function (objects, e) {
             var l = objects.length;
             while (l--) {
                 var obj = objects[l];
                 if (obj.isActive) {
-                    var map = this.getObjectMap();
+                    var map = this.utils.getObjectMap(this.shapes);
                     this.translate(objects[l], map);
                     objects[l].execute('tick', e);
                 }
             }
         },
 
+        getPath : function (object, map) {
+
+            var width = this.config.canvas.grid.width;
+            var height = this.config.canvas.grid.height;
+
+            var gridX = this.utils.getGridFromCoord(object.x);
+            var gridY = this.utils.getGridFromCoord(object.y);
+
+            var gridDestinationX = object.destinationX ? this.utils.getGridFromCoord(object.destinationX) : gridX;
+            var gridDestinationY = object.destinationY ? this.utils.getGridFromCoord(object.destinationY) : gridY;
+
+            var start = [gridX, gridY];
+            var end = [gridDestinationX, gridDestinationY];
+
+            return a_star(start, end, map, width, height, true);
+        },
+
         translate : function (object, map) {
 
             if (object.destinationX || object.destinationY) {
 
-                var width = this.config.canvas.grid.width;
-                var height = this.config.canvas.grid.height;
                 var gridSize = this.config.canvas.grid.size;
 
-                var gridX = this.utils.getGridFromCoord(object.x);
-                var gridY = this.utils.getGridFromCoord(object.y);
-
-                var gridDestinationX = object.destinationX ? this.utils.getGridFromCoord(object.destinationX) : gridX;
-                var gridDestinationY = object.destinationY ? this.utils.getGridFromCoord(object.destinationY) : gridY;
-
-                var start = [gridX, gridY];
-                var end = [gridDestinationX, gridDestinationY];
-
-                var path = a_star(start, end, map, width, height, true);
+                var path = this.getPath(object, map);
 
                 if (path.length > 1) {
 
-                    var next = [path[1].x, path[1].y];
+                    var next = path[1];
 
                     console.log(object.id + ': ' + start, ' -> ', next, ' ... ', end);
 
-                    if (gridX < next[0]) {
+                    if (gridX < next.x) {
 
                         object.x = object.x + gridSize;
 
-                    } else if (gridX > next[0]) {
+                    } else if (gridX > next.x) {
 
                         object.x = object.x - gridSize;
-
                     }
 
-                    if (gridY < next[1]) {
+                    if (gridY < next.y) {
 
                         object.y = object.y + gridSize;
 
-                    } else if (gridY > next[1]) {
+                    } else if (gridY > next.y) {
 
                         object.y = object.y - gridSize;
-
                     }
 
                 } else {
@@ -229,17 +193,14 @@ define(function (require) {
                     this.selected.destinationX = mouse.x;
                     this.selected.destinationY = mouse.y;
                 }
-
             }
         },
 
         getIndicator : function () {
-
             var indicators = this.shapes.filter(function (shape) {
                 return shape.id ==='indicator';
             });
-
-            return indicators[0];
+            return indicators.length ? indicators[0] : null;
         },
 
         bindEvents : function (config) {
@@ -256,26 +217,22 @@ define(function (require) {
             });
 
             this.canvas.bind('touchstart', function (e) {
-
+                e.preventDefault();
                 var mouse = that.getMouse({
                     pageX : e.changedTouches[0].pageX,
                     pageY : e.changedTouches[0].pageY
                 });
 
-                // get object touched
-
                 var indicator = that.getIndicator();
 
-                indicator.x = mouse.x;
-                indicator.y = mouse.y;
+                indicator.x = mouse.x; // start indicator
+                indicator.y = mouse.y; // start indicator
 
                 indicator.isActive = true;
-
-                // bind touchmove
             });
 
             this.canvas.bind('touchend', function (e) {
-
+                e.preventDefault();
                 var indicator = that.getIndicator();
 
                 indicator.isActive = false;
@@ -288,12 +245,10 @@ define(function (require) {
                 var object = that.getClickedObject(mouse);
 
                 that.activateObject(object, mouse);
-
-                // unbind touchmove
             });
 
             this.canvas.bind('touchmove', function (e) {
-
+                e.preventDefault();
                 var indicator = that.getIndicator();
 
                 var mouse = that.getMouse({
@@ -301,8 +256,10 @@ define(function (require) {
                     pageY : e.changedTouches[0].pageY
                 });
 
-                indicator.x = mouse.x;
-                indicator.y = mouse.y;
+                indicator.x = mouse.x; // end indicator
+                indicator.y = mouse.y; // end indicator
+
+                // draw path
             });
 
             this.canvas.bind('click', function (e) {
