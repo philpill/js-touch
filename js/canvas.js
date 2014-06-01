@@ -26,17 +26,15 @@ define(function (require) {
         },
         bindEvents : function () {
 
-            // this.canvas.addEventListener('click', this.trigger.bind(this, 'click'), false);
-
             this.canvas.addEventListener('touchstart', this.trigger.bind(this, 'touchstart'), false);
-            this.canvas.addEventListener('mousedown', this.trigger.bind(this, 'touchstart'), false);
+            this.canvas.addEventListener('mousedown', this.trigger.bind(this, 'mousedown'), false);
 
             this.canvas.addEventListener('touchend', this.trigger.bind(this, 'touchend'), false);
-            this.canvas.addEventListener('mouseup', this.trigger.bind(this, 'touchend'), false);
-            this.canvas.addEventListener('touchcancel', this.trigger.bind(this, 'touchend'), false);
+            this.canvas.addEventListener('mouseup', this.trigger.bind(this, 'mouseup'), false);
+            this.canvas.addEventListener('touchcancel', this.trigger.bind(this, 'touchcancel'), false);
 
             this.canvas.addEventListener('touchmove', this.trigger.bind(this, 'touchmove'), false);
-            this.canvas.addEventListener('mousemove', this.trigger.bind(this, 'touchmove'), false);
+            this.canvas.addEventListener('mousemove', this.trigger.bind(this, 'mousemove'), false);
         },
         execute : function (command, e) {
 
